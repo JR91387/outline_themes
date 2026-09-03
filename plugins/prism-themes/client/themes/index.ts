@@ -18,6 +18,9 @@ export { encyclopediaLight } from "./encyclopediaLight";
 export { eveningLilac } from "./eveningLilac";
 export { graphiteEmber } from "./graphiteEmber";
 export { hacker } from "./hacker";
+// HIOS company-branded themes (2; brand fonts IBM Plex)
+export { hiosDaylight } from "./hiosDaylight";
+export { hiosNightshift } from "./hiosNightshift";
 export { lightBrew } from "./lightBrew";
 export { lilac } from "./lilac";
 export { mineralRed } from "./mineralRed";
