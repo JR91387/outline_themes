@@ -26,13 +26,17 @@ import type * as T from "./schema";
 const router = new Router();
 
 router.post("auth.config", async (ctx: APIContext<T.AuthConfigReq>) => {
-  // If self hosted AND there is only one team then that team becomes the
-  // brand for the knowledge base and it's guest signin option is used for the
-  // root login page.
+  // If self hosted, find the team matching this hostname first (multi-workspace),
+  // falling back to the last-created team (single-workspace installs).
   if (!env.isCloudHosted) {
-    const team = await Team.scope("withAuthenticationProviders").findOne({
-      order: [["createdAt", "DESC"]],
+    const teamByHostname = await Team.scope("withAuthenticationProviders").findOne({
+      where: { domain: ctx.request.hostname.toLowerCase() },
     });
+    const team =
+      teamByHostname ??
+      (await Team.scope("withAuthenticationProviders").findOne({
+        order: [["createdAt", "DESC"]],
+      }));
 
     if (team) {
       ctx.body = {
@@ -42,6 +46,7 @@ router.post("auth.config", async (ctx: APIContext<T.AuthConfigReq>) => {
           logo: team.getPreference(TeamPreference.PublicBranding)
             ? team.avatarUrl
             : undefined,
+          hostname: teamByHostname ? ctx.request.hostname : undefined,
           providers: (await AuthenticationHelper.providersForTeam(team)).map(
             presentProviderConfig
           ),

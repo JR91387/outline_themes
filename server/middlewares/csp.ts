@@ -63,6 +63,7 @@ export default function createCSPMiddleware(options?: CSPOptions) {
     scriptSrc.push("localhost:3001");
   } else {
     scriptSrc.push(env.URL);
+    scriptSrc.push("'self'"); // allow scripts on any domain serving this app (multi-workspace)
   }
 
   if (env.GOOGLE_ANALYTICS_ID) {

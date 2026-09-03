@@ -149,7 +149,7 @@ export class StateStore {
       sameSite: "lax",
       secure: env.isProduction,
       expires: addMinutes(new Date(), 10),
-      domain: getCookieDomain(context.hostname, env.isCloudHosted),
+      domain: getCookieDomain(context.hostname, env.isCloudHosted, env.COOKIE_DOMAIN),
     });
 
     callback(null, state);
@@ -167,7 +167,7 @@ export class StateStore {
       sameSite: "lax",
       secure: env.isProduction,
       expires: subMinutes(new Date(), 1),
-      domain: getCookieDomain(context.hostname, env.isCloudHosted),
+      domain: getCookieDomain(context.hostname, env.isCloudHosted, env.COOKIE_DOMAIN),
     });
 
     let state;
@@ -314,9 +314,10 @@ export async function getTeamFromContext(
     if (env.ENVIRONMENT === "test") {
       team = await Team.findByDomain(env.URL);
     } else {
-      team = await Team.findOne({
-        order: [["createdAt", "DESC"]],
-      });
+      // Multi-workspace self-hosted: resolve by the hostname carried in the
+      // signed OAuth state; fall back to last-created for single-workspace installs.
+      team = (host ? await Team.findByDomain(host) : undefined) ??
+        await Team.findOne({ order: [["createdAt", "DESC"]] });
     }
   } else if (context.state?.rootShare) {
     team = await Team.findByPk(context.state.rootShare.teamId);

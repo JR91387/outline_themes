@@ -82,7 +82,11 @@ export function parseDomain(url: string): Domain {
   };
 }
 
-export function getCookieDomain(domain: string, isCloudHosted: boolean) {
+export function getCookieDomain(
+  domain: string,
+  isCloudHosted: boolean,
+  overrideDomain?: string
+) {
   // always use the base URL for cookies when in hosted mode
   // and the domain is not custom
   if (isCloudHosted) {
@@ -93,7 +97,7 @@ export function getCookieDomain(domain: string, isCloudHosted: boolean) {
     }
   }
 
-  return domain;
+  return overrideDomain ?? domain;
 }
 
 export const RESERVED_SUBDOMAINS = [

@@ -32,7 +32,7 @@ export function generateOAuthStateNonce(
     httpOnly: true,
     sameSite: "lax",
     expires: addMinutes(new Date(), 10),
-    domain: getCookieDomain(ctx.hostname, env.isCloudHosted),
+    domain: getCookieDomain(ctx.hostname, env.isCloudHosted, env.COOKIE_DOMAIN),
   });
   return nonce;
 }
@@ -59,7 +59,7 @@ export function verifyOAuthStateNonce(
     httpOnly: true,
     sameSite: "lax",
     expires: subMinutes(new Date(), 1),
-    domain: getCookieDomain(ctx.hostname, env.isCloudHosted),
+    domain: getCookieDomain(ctx.hostname, env.isCloudHosted, env.COOKIE_DOMAIN),
   });
 
   if (!safeEqual(cookieNonce, stateNonce)) {

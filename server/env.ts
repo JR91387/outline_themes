@@ -241,6 +241,14 @@ export class Environment {
   ).replace(/\/$/, "");
 
   /**
+   * Optional shared cookie domain for multi-workspace self-hosted deployments.
+   * Set to a parent domain (e.g. ".epsiloneridani.cc") to allow auth cookies
+   * to be shared across all workspace subdomains.
+   */
+  @IsOptional()
+  public COOKIE_DOMAIN = this.toOptionalString(environment.COOKIE_DOMAIN);
+
+  /**
    * If using a Cloudfront/Cloudflare distribution or similar it can be set below.
    * This will cause paths to javascript, stylesheets, and images to be updated to
    * the hostname defined in CDN_URL. In your CDN configuration the origin server
